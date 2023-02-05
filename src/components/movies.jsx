@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { getMovies } from '../services/fakeMovieService';
 import Like from './like';
+import Pagination from './common/pagination';
+import paginate from './utils/paginate';
 
 class Movies extends Component {
     state = {
         movies: getMovies(),
+        pageSize: 4,
+        currentPage: 1,
     };
 
     handleDelete = movie => {
@@ -20,8 +24,15 @@ class Movies extends Component {
         this.setState({ movies });
     };
 
+    handlePageChange = page => {
+        this.setState({ currentPage: page });
+    };
+
     render() {
-        const { length: count } = this.state.movies;
+        const { pageSize, currentPage, movies } = this.state;
+        const { length: count } = movies;
+        const selectedMovies = paginate(movies, currentPage, pageSize);
+
         if (count === 0) return <p>There is no movies in the database.</p>;
 
         return (
@@ -37,10 +48,11 @@ class Movies extends Component {
                             <th>Stock</th>
                             <th>Rate</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.movies.map(movie => (
+                        {selectedMovies.map(movie => (
                             <tr key={movie._id}>
                                 <td>{movie.title}</td>
                                 <td>{movie.genre.name}</td>
@@ -54,7 +66,7 @@ class Movies extends Component {
                                 </td>
                                 <td>
                                     <button
-                                        onClick={() => this.handleDelete(movie)}
+                                        onClick={() => this.handleDelete(movie, currentPage)}
                                         className="btn btn-danger btn-sm">
                                         Delete
                                     </button>
@@ -63,6 +75,12 @@ class Movies extends Component {
                         ))}
                     </tbody>
                 </table>
+                <Pagination
+                    itemsCount={count}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                />
             </>
         );
     }
