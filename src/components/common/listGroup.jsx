@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ListGroup({ onItemSelect, items, textProperty, valueProperty, selectedItem }) {
+const ListGroup = ({ onItemSelect, items, textProperty, valueProperty, selectedItem }) => {
     return (
         <ul className="list-group">
             {items.map(item => (
@@ -13,7 +13,7 @@ function ListGroup({ onItemSelect, items, textProperty, valueProperty, selectedI
             ))}
         </ul>
     );
-}
+};
 
 ListGroup.defaultProps = {
     textProperty: 'name',
