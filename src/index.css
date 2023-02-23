@@ -4,7 +4,10 @@ body {
         'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    padding-top: 20px;
+}
+
+.navbar {
+    margin-bottom: 30px;
 }
 
 code {
