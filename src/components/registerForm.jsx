@@ -13,14 +13,8 @@ class RegisterForm extends Form {
     };
 
     schema = {
-        username: Joi.string()
-            .required()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-        password: Joi.string()
-            .required()
-            .regex(/^[a-zA-Z0-9]{3,30}$/)
-            .min(5)
-            .label('Password'),
+        username: Joi.string().required().email().label('Username'),
+        password: Joi.string().required().min(5).label('Password'),
         name: Joi.string().required().label('Name'),
     };
 
