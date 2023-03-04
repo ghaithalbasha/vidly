@@ -6,6 +6,7 @@ import { getMovies } from '../services/fakeMovieService';
 import { getGenres } from '../services/fakeGenreService';
 import paginate from './utils/paginate';
 import _ from 'lodash';
+import { Link } from 'react-router-dom';
 
 class Movies extends Component {
     state = {
@@ -14,6 +15,7 @@ class Movies extends Component {
         pageSize: 4,
         currentPage: 1,
         sortColumn: { path: 'title', order: 'asc' },
+        searchTerm: '',
     };
 
     componentDidMount() {
@@ -75,6 +77,9 @@ class Movies extends Component {
                     />
                 </div>
                 <div className="col">
+                    <Link to="/movies/new" className="btn btn-primary" style={{ marginBottom: 20 }}>
+                        New Movie
+                    </Link>
                     <p>
                         Showing {totalCount} movie{count >= 2 && 's'} in the database
                     </p>
