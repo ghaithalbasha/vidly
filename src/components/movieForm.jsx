@@ -1,8 +1,8 @@
 import React from 'react';
 import Form from './common/form';
 import Joi from 'joi-browser';
-import { getGenres } from '../services/fakeGenreService';
-import { getMovie, saveMovie } from '../services/fakeMovieService';
+import { getGenres } from '../services/genreService';
+import { getSingleMovie, saveMovie } from '../services/movieService';
 
 class MovieForm extends Form {
     state = {
@@ -24,8 +24,8 @@ class MovieForm extends Form {
         dailyRentalRate: Joi.number().required().min(0).max(10).label('Daily Rental Rate'),
     };
 
-    doSubmit = () => {
-        saveMovie(this.state.data);
+    doSubmit = async () => {
+        await saveMovie(this.state.data);
         this.props.history.push('/movies');
     };
 
@@ -39,17 +39,27 @@ class MovieForm extends Form {
         };
     };
 
-    componentDidMount() {
-        const genres = getGenres();
+    populateGenres = async () => {
+        const { data: genres } = await getGenres();
         this.setState({ genres });
+    };
 
-        const movieId = this.props.match.params.id;
-        if (movieId === 'new') return;
+    populateMovie = async () => {
+        try {
+            const movieId = this.props.match.params.id;
+            if (movieId === 'new') return;
 
-        const movie = getMovie(movieId);
-        if (!movie) return this.props.history.replace('/not-found');
+            const { data: movie } = await getSingleMovie(movieId);
+            this.setState({ data: this.mapToViewModel(movie) });
+        } catch (error) {
+            if (error.response && error.response.status === 404)
+                this.props.history.replace('/not-found');
+        }
+    };
 
-        this.setState({ data: this.mapToViewModel(movie) });
+    async componentDidMount() {
+        await this.populateGenres();
+        await this.populateMovie();
     }
 
     render() {
@@ -60,7 +70,7 @@ class MovieForm extends Form {
                     {this.renderSelect('genreId', 'Genre', this.state.genres)}
                     {this.renderInput('numberInStock', 'Number in Stock', 'number')}
                     {this.renderInput('dailyRentalRate', 'Daily Rental Rate', 'number')}
-                    {this.renderButton('Register')}
+                    {this.renderButton('Save')}
                 </form>
             </div>
         );
