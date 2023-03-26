@@ -29,6 +29,16 @@ class Movies extends Component {
         this.setState({ movies, genres });
     }
 
+    handlePaginationAfterDelete = movies => {
+        const { pageSize } = this.state;
+        const { currentPage } = this.state;
+        const { length } = movies;
+
+        if (length % pageSize === 0 && length / pageSize < currentPage) {
+            this.setState({ currentPage: currentPage - 1 });
+        }
+    };
+
     handleDelete = async movie => {
         const originalMovies = this.state.movies;
         const movies = originalMovies.filter(m => m._id !== movie._id);
@@ -36,6 +46,7 @@ class Movies extends Component {
 
         try {
             await deleteMovie(movie._id);
+            this.handlePaginationAfterDelete(movies);
         } catch (ex) {
             if (ex.response && ex.response.status === 404)
                 toast.error('This movies has already been deleted.');
